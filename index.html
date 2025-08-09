@@ -1,460 +1,443 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2202.7">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-    span.s1 {font: 12.0px 'Apple Color Emoji'}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Love ShinDig 2026 | Planning Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals with Subtle Accents -->
+    <!-- Application Structure Plan: A task-oriented dashboard SPA. A sticky navigation bar provides non-linear access to key planning sections (Timeline, Venues, Budget, Itinerary, etc.). This structure is chosen for usability, allowing a planner to quickly access specific information without scrolling through the entire document, making it a functional tool rather than a static report. -->
+    <!-- Visualization & Content Choices: 
+        - Timeline: Goal: Change/Organize. Method: Interactive HTML/CSS vertical timeline. Interaction: Hover effects. Justification: Visualizes the phased plan engagingly. NO SVG/Mermaid.
+        - Venue Explorer: Goal: Compare/Organize. Method: Filterable HTML cards. Interaction: Button filters update the view. Justification: Allows users to dynamically explore venue options by location. NO SVG/Mermaid.
+        - Budget Planner: Goal: Compare/Inform. Method: Chart.js Donut Chart + dynamic text. Interaction: User input for participant count updates the budget visuals and numbers in real-time. Justification: Turns a static budget into a live planning tool. NO SVG/Mermaid.
+        - Itinerary: Goal: Inform/Organize. Method: Structured HTML cards. Justification: Presents the multi-day schedule in a clear, scannable format. NO SVG/Mermaid.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fdfaf6;
+            color: #4a4a4a;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 300px;
+            }
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+        }
+        .nav-link:hover {
+            color: #c5a880;
+        }
+        .active-link {
+            color: #c5a880;
+            border-bottom: 2px solid #c5a880;
+        }
+        .timeline-item-content {
+            transition: all 0.3s ease-in-out;
+        }
+        .timeline-item:hover .timeline-item-content {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+        }
+        .timeline-dot {
+            transition: all 0.3s ease-in-out;
+        }
+        .timeline-item:hover .timeline-dot {
+            transform: scale(1.5);
+            background-color: #c5a880;
+        }
+    </style>
 </head>
-<body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="en" class="scroll-smooth"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;Love ShinDig 2026 | Planning Dashboard&lt;/title&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.jsdelivr.net/npm/chart.js"&gt;&lt;/script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;link rel="preconnect" href="https://fonts.googleapis.com"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;link rel="preconnect" href="https://fonts.gstatic.com" crossorigin&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Chosen Palette: Warm Neutrals with Subtle Accents --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Application Structure Plan: A task-oriented dashboard SPA. A sticky navigation bar provides non-linear access to key planning sections (Timeline, Venues, Budget, Itinerary, etc.). This structure is chosen for usability, allowing a planner to quickly access specific information without scrolling through the entire document, making it a functional tool rather than a static report. --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Visualization &amp; Content Choices:<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>- Timeline: Goal: Change/Organize. Method: Interactive HTML/CSS vertical timeline. Interaction: Hover effects. Justification: Visualizes the phased plan engagingly. NO SVG/Mermaid.</p>
-<p class="p1"><span class="Apple-converted-space">        </span>- Venue Explorer: Goal: Compare/Organize. Method: Filterable HTML cards. Interaction: Button filters update the view. Justification: Allows users to dynamically explore venue options by location. NO SVG/Mermaid.</p>
-<p class="p1"><span class="Apple-converted-space">        </span>- Budget Planner: Goal: Compare/Inform. Method: Chart.js Donut Chart + dynamic text. Interaction: User input for participant count updates the budget visuals and numbers in real-time. Justification: Turns a static budget into a live planning tool. NO SVG/Mermaid.</p>
-<p class="p1"><span class="Apple-converted-space">        </span>- Itinerary: Goal: Inform/Organize. Method: Structured HTML cards. Justification: Presents the multi-day schedule in a clear, scannable format. NO SVG/Mermaid.</p>
-<p class="p1"><span class="Apple-converted-space">    </span>--&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>body {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-family: 'Inter', sans-serif;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background-color: #fdfaf6;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: #4a4a4a;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.chart-container {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>position: relative;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>width: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>max-width: 450px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-left: auto;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-right: auto;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>height: 350px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>max-height: 400px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>@media (max-width: 768px) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>.chart-container {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>height: 300px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.nav-link {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>transition: color 0.3s, border-bottom-color 0.3s;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.nav-link:hover {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: #c5a880;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.active-link {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: #c5a880;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-bottom: 2px solid #c5a880;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.timeline-item-content {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>transition: all 0.3s ease-in-out;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.timeline-item:hover .timeline-item-content {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>transform: translateY(-5px);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>box-shadow: 0 10px 20px rgba(0,0,0,0.08);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.timeline-dot {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>transition: all 0.3s ease-in-out;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.timeline-item:hover .timeline-dot {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>transform: scale(1.5);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background-color: #c5a880;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body class="antialiased"&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;nav class="container mx-auto px-4 sm:px-6 lg:px-8"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="flex items-center justify-between h-16"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="flex-shrink-0"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;a href="#" class="text-2xl font-bold text-[#a0845e]"&gt;Love ShinDig 2026&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="hidden md:block"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="ml-10 flex items-baseline space-x-4" id="nav-menu"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;a href="#timeline" class="nav-link px-3 py-2 rounded-md text-sm font-medium"&gt;Timeline&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;a href="#venues" class="nav-link px-3 py-2 rounded-md text-sm font-medium"&gt;Venues&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;a href="#budget" class="nav-link px-3 py-2 rounded-md text-sm font-medium"&gt;Budget&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;a href="#itinerary" class="nav-link px-3 py-2 rounded-md text-sm font-medium"&gt;Itinerary&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;a href="#checklist" class="nav-link px-3 py-2 rounded-md text-sm font-medium"&gt;Checklist&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/nav&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/header&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;main&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;section id="hero" class="py-20 bg-white"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;h1 class="text-4xl md:text-5xl font-bold tracking-tight text-[#4a4a4a]"&gt;Your Reunion Planning Dashboard&lt;/h1&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;p class="mt-4 text-lg text-gray-600"&gt;A strategic guide to creating an unforgettable Love ShinDig for Juneteenth 2026.&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div id="countdown" class="mt-8 text-2xl md:text-4xl font-bold text-[#c5a880] space-x-2 md:space-x-6"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/section&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;section id="timeline" class="py-16"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="container mx-auto px-4 sm:px-6 lg:px-8"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2 class="text-3xl font-bold text-center mb-4"&gt;Planning Timeline&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;p class="text-center text-gray-600 max-w-2xl mx-auto mb-12"&gt;This timeline breaks down the planning process into manageable phases. Hover over each phase to see the key tasks and focus areas, ensuring you stay on track from the initial vision to post-event celebrations.&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="relative"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="absolute left-1/2 h-full w-0.5 bg-gray-200 -translate-x-1/2 hidden md:block"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="space-y-12"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;!-- Timeline Item 1 --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="relative flex flex-col md:flex-row items-center timeline-item"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="w-full md:w-5/12 md:text-right md:pr-8 mb-4 md:mb-0"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="bg-white p-6 rounded-lg shadow-md timeline-item-content"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;h3 class="text-xl font-bold text-[#a0845e]"&gt;Phase I: Foundation&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;p class="text-sm font-semibold text-gray-500 mb-2"&gt;18-12 Months Out&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;p class="text-gray-600"&gt;Establish the "why" of the reunion, form a diverse planning committee with clear roles, and create the initial financial blueprint.&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-gray-300 border-2 border-white timeline-dot hidden md:block"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="w-full md:w-5/12 md:pl-8"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;!-- Timeline Item 2 --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="relative flex flex-col-reverse md:flex-row items-center timeline-item"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="w-full md:w-5/12 md:pr-8"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-gray-300 border-2 border-white timeline-dot hidden md:block"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="w-full md:w-5/12 md:pl-8 mb-4 md:mb-0"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="bg-white p-6 rounded-lg shadow-md timeline-item-content"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;h3 class="text-xl font-bold text-[#a0845e]"&gt;Phase II: Framework&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;p class="text-sm font-semibold text-gray-500 mb-2"&gt;12-6 Months Out&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;p class="text-gray-600"&gt;Select the venue, integrate the cultural significance of Juneteenth, and execute a multi-channel communication plan to send "Save the Dates".&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;!-- Timeline Item 3 --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="relative flex flex-col md:flex-row items-center timeline-item"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="w-full md:w-5/12 md:text-right md:pr-8 mb-4 md:mb-0"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="bg-white p-6 rounded-lg shadow-md timeline-item-content"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;h3 class="text-xl font-bold text-[#a0845e]"&gt;Phase III: Final Countdown&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;p class="text-sm font-semibold text-gray-500 mb-2"&gt;6-3 Months Out&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;p class="text-gray-600"&gt;Finalize catering, plan a detailed itinerary with activities for all ages, and manage RSVPs and payments through official invitations.&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-gray-300 border-2 border-white timeline-dot hidden md:block"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="w-full md:w-5/12 md:pl-8"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;!-- Timeline Item 4 --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="relative flex flex-col-reverse md:flex-row items-center timeline-item"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="w-full md:w-5/12 md:pr-8"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-gray-300 border-2 border-white timeline-dot hidden md:block"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="w-full md:w-5/12 md:pl-8 mb-4 md:mb-0"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="bg-white p-6 rounded-lg shadow-md timeline-item-content"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;h3 class="text-xl font-bold text-[#a0845e]"&gt;Phase IV: Post-ShinDig&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;p class="text-gray-600"&gt;Share memories through photos and newsletters, send thank-you notes, and gather feedback with a survey to improve future events.&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/section&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;section id="venues" class="py-16 bg-white"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="container mx-auto px-4 sm:px-6 lg:px-8"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2 class="text-3xl font-bold text-center mb-4"&gt;Venue Explorer&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;p class="text-center text-gray-600 max-w-3xl mx-auto mb-8"&gt;Choosing the right venue is critical. Use the filters below to explore options across Webster, League City, and Houston. Each location offers a unique atmosphere, from intimate suburban parks to grand, historic sites in the city. Consider the balance between cost, capacity, and the desired vibe for the reunion.&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="flex justify-center flex-wrap gap-2 mb-8" id="venue-filters"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button class="filter-btn bg-[#c5a880] text-white px-4 py-2 rounded-full text-sm" data-filter="all"&gt;All Locations&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button class="filter-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-full text-sm" data-filter="Webster"&gt;Webster&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button class="filter-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-full text-sm" data-filter="League City"&gt;League City&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button class="filter-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-full text-sm" data-filter="Houston"&gt;Houston&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div id="venue-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/section&gt;</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;section id="budget" class="py-16"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="container mx-auto px-4 sm:px-6 lg:px-8"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2 class="text-3xl font-bold text-center mb-4"&gt;Financial Blueprint&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;p class="text-center text-gray-600 max-w-3xl mx-auto mb-8"&gt;A well-planned budget is the key to a stress-free reunion. Enter your estimated number of participants below to see a real-time budget breakdown based on the **$250 per person** goal. This tool helps visualize how the total funds are allocated across key categories.&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md mb-12"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                     </span>&lt;div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;label for="participant-count" class="text-lg font-medium text-gray-700"&gt;Participants:&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;input type="number" id="participant-count" value="75" min="1" class="w-32 px-4 py-2 text-center rounded-lg border-2 border-gray-300 focus:outline-none focus:border-[#c5a880] transition-colors"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="text-center mt-4"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;p class="text-lg font-medium text-gray-700"&gt;Total Estimated Budget:&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;p id="total-budget" class="text-3xl font-bold text-[#a0845e]"&gt;$18,750&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h3 class="text-xl font-bold text-center mb-4"&gt;Sample Budget Allocation&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="chart-container"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;canvas id="budgetChart"&gt;&lt;/canvas&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="bg-white p-6 rounded-lg shadow-md"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h3 class="text-xl font-bold mb-4"&gt;Catering Options&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;p class="text-gray-600 mb-4"&gt;Your budget allows for a range of culinary experiences. Here are some ideas:&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;ul class="space-y-3"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;li class="flex items-start"&gt;&lt;span class="text-2xl mr-3 text-[#c5a880]"&gt;<span class="s1">🍖</span>&lt;/span&gt;&lt;div&gt;&lt;span class="font-semibold"&gt;On-site BBQ Cookout:&lt;/span&gt;&lt;p class="text-sm text-gray-500"&gt;Hire a caterer like Goode Co. for an authentic Texas BBQ experience.&lt;/p&gt;&lt;/div&gt;&lt;/li&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;li class="flex items-start"&gt;&lt;span class="text-2xl mr-3 text-[#c5a880]"&gt;<span class="s1">🍽️</span>&lt;/span&gt;&lt;div&gt;&lt;span class="font-semibold"&gt;Formal Plated Dinner:&lt;/span&gt;&lt;p class="text-sm text-gray-500"&gt;Part of the dinner cruise package, offering an elegant dining experience.&lt;/p&gt;&lt;/div&gt;&lt;/li&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;li class="flex items-start"&gt;&lt;span class="text-2xl mr-3 text-[#c5a880]"&gt;<span class="s1">🌮</span>&lt;/span&gt;&lt;div&gt;&lt;span class="font-semibold"&gt;Casual Farewell Brunch:&lt;/span&gt;&lt;p class="text-sm text-gray-500"&gt;A relaxed meal at La Brisa to say goodbye.&lt;/p&gt;&lt;/div&gt;&lt;/li&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/ul&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/section&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;section id="itinerary" class="py-16 bg-white"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="container mx-auto px-4 sm:px-6 lg:px-8"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2 class="text-3xl font-bold text-center mb-4"&gt;Weekend Itinerary&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;p class="text-center text-gray-600 max-w-3xl mx-auto mb-12"&gt;Here’s a sample schedule for our Love ShinDig weekend. It balances organized events with plenty of free time for catching up, relaxing, and exploring the area on your own.&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;!-- Day 1 --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="bg-gray-50 p-6 rounded-lg shadow-md"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h3 class="text-xl font-bold text-[#a0845e]"&gt;Thursday, June 18&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;p class="text-sm font-semibold text-gray-500 mb-4"&gt;Arrival &amp; Welcome&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;ul class="space-y-3 text-gray-700"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;li&gt;&lt;span class="font-semibold"&gt;Afternoon:&lt;/span&gt; Check-in &amp; Settle at **Great Wolf Lodge**.&lt;/li&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;li&gt;&lt;span class="font-semibold"&gt;Evening:&lt;/span&gt; Casual Welcome Mixer with light appetizers &amp; drinks.&lt;/li&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/ul&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;!-- Day 2 --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="bg-gray-50 p-6 rounded-lg shadow-md"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h3 class="text-xl font-bold text-[#a0845e]"&gt;Friday, June 19&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;p class="text-sm font-semibold text-gray-500 mb-4"&gt;Juneteenth Celebration&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;ul class="space-y-3 text-gray-700"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;li&gt;&lt;span class="font-semibold"&gt;Morning/Afternoon:&lt;/span&gt; Cultural Excursion to a local Juneteenth parade or highly-rated Black history museum.&lt;/li&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;li&gt;&lt;span class="font-semibold"&gt;Afternoon/Evening:&lt;/span&gt; Family Games and Activities at **Great Wolf Lodge**.&lt;/li&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/ul&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;!-- Day 3 --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="bg-gray-50 p-6 rounded-lg shadow-md"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h3 class="text-xl font-bold text-[#a0845e]"&gt;Saturday, June 20&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;p class="text-sm font-semibold text-gray-500 mb-4"&gt;Explore &amp; Cruise&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;ul class="space-y-3 text-gray-700"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;li&gt;&lt;span class="font-semibold"&gt;Day:&lt;/span&gt; Free time for excursions (e.g., Space Center, museums).&lt;/li&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;li&gt;&lt;span class="font-semibold"&gt;Evening:&lt;/span&gt; Celebratory Dinner Cruise on Galveston Bay.&lt;/li&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/ul&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;!-- Day 4 --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="bg-gray-50 p-6 rounded-lg shadow-md"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h3 class="text-xl font-bold text-[#a0845e]"&gt;Sunday, June 21&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;p class="text-sm font-semibold text-gray-500 mb-4"&gt;Farewell Brunch&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;ul class="space-y-3 text-gray-700"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;li&gt;&lt;span class="font-semibold"&gt;Morning:&lt;/span&gt; Farewell Brunch at La Brisa in League City.&lt;/li&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;li&gt;&lt;span class="font-semibold"&gt;Afternoon:&lt;/span&gt; Departures.&lt;/li&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/ul&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/section&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;section id="checklist" class="py-16"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="container mx-auto px-4 sm:px-6 lg:px-8"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2 class="text-3xl font-bold text-center mb-4"&gt;Day-Of Essentials Checklist&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                 </span>&lt;p class="text-center text-gray-600 max-w-3xl mx-auto mb-12"&gt;As the big day approaches, use this master checklist to ensure all logistical details are covered for a smooth and stress-free event.&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;ul class="space-y-4"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;li class="flex items-center"&gt;&lt;input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#c5a880] focus:ring-[#c5a880]"&gt;&lt;span class="ml-3 text-gray-700"&gt;Confirm venue access times and vendor arrivals.&lt;/span&gt;&lt;/li&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;li class="flex items-center"&gt;&lt;input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#c5a880] focus:ring-[#c5a880]"&gt;&lt;span class="ml-3 text-gray-700"&gt;Designate and mark parking areas, especially for elderly guests.&lt;/span&gt;&lt;/li&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;li class="flex items-center"&gt;&lt;input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#c5a880] focus:ring-[#c5a880]"&gt;&lt;span class="ml-3 text-gray-700"&gt;Set up a welcome station with name tags and itinerary.&lt;/span&gt;&lt;/li&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;li class="flex items-center"&gt;&lt;input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#c5a880] focus:ring-[#c5a880]"&gt;&lt;span class="ml-3 text-gray-700"&gt;Finalize seating layout and recruit volunteers for setup.&lt;/span&gt;&lt;/li&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;li class="flex items-center"&gt;&lt;input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#c5a880] focus:ring-[#c5a880]"&gt;&lt;span class="ml-3 text-gray-700"&gt;Prepare a fully stocked first-aid kit and have it accessible.&lt;/span&gt;&lt;/li&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;li class="flex items-center"&gt;&lt;input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#c5a880] focus:ring-[#c5a880]"&gt;&lt;span class="ml-3 text-gray-700"&gt;Charge cameras and designate a family photographer/videographer.&lt;/span&gt;&lt;/li&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/ul&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/section&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/main&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;footer class="bg-gray-800 text-white py-8"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;p&gt;&amp;copy; 2024 Love ShinDig Planning Committee. Let's make memories!&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/footer&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.addEventListener('DOMContentLoaded', function() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const warmPalette = {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>dark: '#4a4a4a',</p>
-<p class="p1"><span class="Apple-converted-space">                </span>accent: '#c5a880',</p>
-<p class="p1"><span class="Apple-converted-space">                </span>lightAccent: '#e6dace',</p>
-<p class="p1"><span class="Apple-converted-space">                </span>neutral: '#a9a9a9',</p>
-<p class="p1"><span class="Apple-converted-space">                </span>background: '#fdfaf6'</p>
-<p class="p1"><span class="Apple-converted-space">            </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>const venueData = [</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{ name: 'Great Wolf Lodge', location: 'Webster', cost: '$$$$', features: 'A resort with an indoor water park, activities, and dining all in one place.' },</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{ name: 'Topgolf Webster', location: 'Webster', cost: '$$$', features: 'Unique entertainment venue ideal for interactive fun.' },</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{ name: 'Main Event Webster', location: 'Webster', cost: '$$$', features: 'One-stop-shop with bowling, games, and themed buffets.' },</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{ name: 'Hometown Heroes Park', location: 'League City', cost: '$$', features: 'Indoor multi-purpose rooms and gyms with tables and chairs included.' },</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{ name: 'La Brisa', location: 'League City', cost: '$$', features: 'Casual Mexican restaurant with a large patio, perfect for the farewell brunch.' },</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{ name: 'Emancipation Park', location: 'Houston', cost: '$$', features: 'Historically significant location with indoor/outdoor spaces.' },</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{ name: 'POST Houston', location: 'Houston', cost: '$$$$', features: 'Modern architectural gem with a lush rooftop park.' },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>];</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>const venueGrid = document.getElementById('venue-grid');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const filterButtons = document.querySelectorAll('.filter-btn');</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>function renderVenues(filter) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>venueGrid.innerHTML = '';</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const filteredData = filter === 'all' ? venueData : venueData.filter(v =&gt; v.location.toLowerCase().replace(' ', '') === filter.toLowerCase().replace(' ', ''));</p>
-<p class="p2"><span class="Apple-converted-space">                </span></p>
-<p class="p1"><span class="Apple-converted-space">                </span>filteredData.forEach(venue =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const card = document.createElement('div');</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>card.className = 'bg-white p-6 rounded-lg shadow-md transition-transform transform hover:-translate-y-1';</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>card.innerHTML = `</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h3 class="text-lg font-bold"&gt;${venue.name}&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;p class="text-sm text-gray-500 mb-2"&gt;${venue.location}&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;p class="text-gray-600 mb-4"&gt;${venue.features}&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="flex justify-between items-center text-sm"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span class="font-bold text-[#a0845e]"&gt;${venue.cost}&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>`;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>venueGrid.appendChild(card);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>});</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>filterButtons.forEach(button =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>button.addEventListener('click', () =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>filterButtons.forEach(btn =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>btn.classList.remove('bg-[#c5a880]', 'text-white');</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>btn.classList.add('bg-gray-200', 'text-gray-700');</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>});</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>button.classList.add('bg-[#c5a880]', 'text-white');</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>button.classList.remove('bg-gray-200', 'text-gray-700');</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>renderVenues(button.dataset.filter);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>});</p>
-<p class="p1"><span class="Apple-converted-space">            </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>renderVenues('all');</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>const countdownElement = document.getElementById('countdown');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const shindigDate = new Date('June 18, 2026 16:00:00').getTime();</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>function updateCountdown() {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const now = new Date().getTime();</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const distance = shindigDate - now;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>const days = Math.floor(distance / (1000 * 60 * 60 * 24));</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const seconds = Math.floor((distance % (1000 * 60)) / 1000);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>countdownElement.innerHTML = `</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;span&gt;${days}d&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;span&gt;${hours}h&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;span&gt;${minutes}m&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;span&gt;${seconds}s&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>`;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>if (distance &lt; 0) {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>clearInterval(countdownInterval);</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>countdownElement.innerHTML = "The ShinDig is Here!";</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const countdownInterval = setInterval(updateCountdown, 1000);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>updateCountdown();</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>const tooltipTitleCallback = (tooltipItems) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const item = tooltipItems[0];</p>
-<p class="p1"><span class="Apple-converted-space">                </span>let label = item.chart.data.labels[item.dataIndex];</p>
-<p class="p1"><span class="Apple-converted-space">                </span>return Array.isArray(label) ? label.join(' ') : label;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>const participantCountInput = document.getElementById('participant-count');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const totalBudgetSpan = document.getElementById('total-budget');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const perPersonCost = 250;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>let budgetChart;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>function updateBudget() {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const participantCount = parseInt(participantCountInput.value) || 0;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const totalBudget = participantCount * perPersonCost;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>totalBudgetSpan.textContent = `$${totalBudget.toLocaleString()}`;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>if (budgetChart) {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>budgetChart.data.datasets[0].data = [</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>totalBudget * 0.45,<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">                        </span>totalBudget * 0.20,<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">                        </span>totalBudget * 0.15,<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">                        </span>totalBudget * 0.10,<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">                        </span>totalBudget * 0.10</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>];</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>budgetChart.update();</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p2"><span class="Apple-converted-space">            </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>participantCountInput.addEventListener('input', updateBudget);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>const budgetCtx = document.getElementById('budgetChart').getContext('2d');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>budgetChart = new Chart(budgetCtx, {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>type: 'doughnut',</p>
-<p class="p1"><span class="Apple-converted-space">                </span>data: {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>labels: ['Venue &amp; Food', 'Entertainment', 'Decorations', 'Communications', 'Contingency'],</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>datasets: [{</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>data: [],</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>backgroundColor: [warmPalette.accent, warmPalette.lightAccent, '#d3c1a5', '#bfa988', warmPalette.neutral],</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>borderColor: warmPalette.background,</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>borderWidth: 4</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>}]</p>
-<p class="p1"><span class="Apple-converted-space">                </span>},</p>
-<p class="p1"><span class="Apple-converted-space">                </span>options: {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>responsive: true,</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>maintainAspectRatio: false,</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>plugins: {</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>legend: { position: 'bottom' },</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>tooltip: {<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">                            </span>callbacks: {<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">                                </span>title: tooltipTitleCallback,</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>label: (context) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                                    </span>const label = context.label || '';</p>
-<p class="p1"><span class="Apple-converted-space">                                    </span>const value = context.parsed || 0;</p>
-<p class="p1"><span class="Apple-converted-space">                                    </span>return `${label}: $${value.toLocaleString()}`;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>}<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">                        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>});</p>
-<p class="p2"><span class="Apple-converted-space">            </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>const navLinks = document.querySelectorAll('#nav-menu a');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const sections = document.querySelectorAll('main section');</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>window.addEventListener('scroll', () =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>let current = '';</p>
-<p class="p1"><span class="Apple-converted-space">                </span>sections.forEach(section =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const sectionTop = section.offsetTop;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>if (pageYOffset &gt;= sectionTop - 64) {</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>current = section.getAttribute('id');</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>navLinks.forEach(link =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>link.classList.remove('active-link');</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>if (link.getAttribute('href').includes(current)) {</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>link.classList.add('active-link');</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>});</p>
-<p class="p1"><span class="Apple-converted-space">            </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>updateBudget();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>});</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <a href="#" class="text-2xl font-bold text-[#a0845e]">Love ShinDig 2026</a>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4" id="nav-menu">
+                        <a href="#timeline" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Timeline</a>
+                        <a href="#venues" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Venues</a>
+                        <a href="#budget" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Budget</a>
+                        <a href="#itinerary" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Itinerary</a>
+                        <a href="#checklist" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Checklist</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="hero" class="py-20 bg-white">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-[#4a4a4a]">Your Reunion Planning Dashboard</h1>
+                <p class="mt-4 text-lg text-gray-600">A strategic guide to creating an unforgettable Love ShinDig for Juneteenth 2026.</p>
+                <div id="countdown" class="mt-8 text-2xl md:text-4xl font-bold text-[#c5a880] space-x-2 md:space-x-6">
+                </div>
+            </div>
+        </section>
+
+        <section id="timeline" class="py-16">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-center mb-4">Planning Timeline</h2>
+                <p class="text-center text-gray-600 max-w-2xl mx-auto mb-12">This timeline breaks down the planning process into manageable phases. Hover over each phase to see the key tasks and focus areas, ensuring you stay on track from the initial vision to post-event celebrations.</p>
+                <div class="relative">
+                    <div class="absolute left-1/2 h-full w-0.5 bg-gray-200 -translate-x-1/2 hidden md:block"></div>
+                    <div class="space-y-12">
+                        <!-- Timeline Item 1 -->
+                        <div class="relative flex flex-col md:flex-row items-center timeline-item">
+                            <div class="w-full md:w-5/12 md:text-right md:pr-8 mb-4 md:mb-0">
+                                <div class="bg-white p-6 rounded-lg shadow-md timeline-item-content">
+                                    <h3 class="text-xl font-bold text-[#a0845e]">Phase I: Foundation</h3>
+                                    <p class="text-sm font-semibold text-gray-500 mb-2">18-12 Months Out</p>
+                                    <p class="text-gray-600">Establish the "why" of the reunion, form a diverse planning committee with clear roles, and create the initial financial blueprint.</p>
+                                </div>
+                            </div>
+                            <div class="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-gray-300 border-2 border-white timeline-dot hidden md:block"></div>
+                            <div class="w-full md:w-5/12 md:pl-8"></div>
+                        </div>
+                        <!-- Timeline Item 2 -->
+                        <div class="relative flex flex-col-reverse md:flex-row items-center timeline-item">
+                            <div class="w-full md:w-5/12 md:pr-8"></div>
+                            <div class="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-gray-300 border-2 border-white timeline-dot hidden md:block"></div>
+                            <div class="w-full md:w-5/12 md:pl-8 mb-4 md:mb-0">
+                                <div class="bg-white p-6 rounded-lg shadow-md timeline-item-content">
+                                    <h3 class="text-xl font-bold text-[#a0845e]">Phase II: Framework</h3>
+                                    <p class="text-sm font-semibold text-gray-500 mb-2">12-6 Months Out</p>
+                                    <p class="text-gray-600">Select the venue, integrate the cultural significance of Juneteenth, and execute a multi-channel communication plan to send "Save the Dates".</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Timeline Item 3 -->
+                        <div class="relative flex flex-col md:flex-row items-center timeline-item">
+                            <div class="w-full md:w-5/12 md:text-right md:pr-8 mb-4 md:mb-0">
+                                <div class="bg-white p-6 rounded-lg shadow-md timeline-item-content">
+                                    <h3 class="text-xl font-bold text-[#a0845e]">Phase III: Final Countdown</h3>
+                                    <p class="text-sm font-semibold text-gray-500 mb-2">6-3 Months Out</p>
+                                    <p class="text-gray-600">Finalize catering, plan a detailed itinerary with activities for all ages, and manage RSVPs and payments through official invitations.</p>
+                                </div>
+                            </div>
+                            <div class="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-gray-300 border-2 border-white timeline-dot hidden md:block"></div>
+                            <div class="w-full md:w-5/12 md:pl-8"></div>
+                        </div>
+                        <!-- Timeline Item 4 -->
+                        <div class="relative flex flex-col-reverse md:flex-row items-center timeline-item">
+                            <div class="w-full md:w-5/12 md:pr-8"></div>
+                            <div class="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-gray-300 border-2 border-white timeline-dot hidden md:block"></div>
+                            <div class="w-full md:w-5/12 md:pl-8 mb-4 md:mb-0">
+                                <div class="bg-white p-6 rounded-lg shadow-md timeline-item-content">
+                                    <h3 class="text-xl font-bold text-[#a0845e]">Phase IV: Post-ShinDig</h3>
+                                    <p class="text-gray-600">Share memories through photos and newsletters, send thank-you notes, and gather feedback with a survey to improve future events.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="venues" class="py-16 bg-white">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-center mb-4">Venue Explorer</h2>
+                <p class="text-center text-gray-600 max-w-3xl mx-auto mb-8">Choosing the right venue is critical. Use the filters below to explore options across Webster, League City, and Houston. Each location offers a unique atmosphere, from intimate suburban parks to grand, historic sites in the city. Consider the balance between cost, capacity, and the desired vibe for the reunion.</p>
+                <div class="flex justify-center flex-wrap gap-2 mb-8" id="venue-filters">
+                    <button class="filter-btn bg-[#c5a880] text-white px-4 py-2 rounded-full text-sm" data-filter="all">All Locations</button>
+                    <button class="filter-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-full text-sm" data-filter="Webster">Webster</button>
+                    <button class="filter-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-full text-sm" data-filter="League City">League City</button>
+                    <button class="filter-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-full text-sm" data-filter="Houston">Houston</button>
+                </div>
+                <div id="venue-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                </div>
+            </div>
+        </section>
+        
+        <section id="budget" class="py-16">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-center mb-4">Financial Blueprint</h2>
+                <p class="text-center text-gray-600 max-w-3xl mx-auto mb-8">A well-planned budget is the key to a stress-free reunion. Enter your estimated number of participants below to see a real-time budget breakdown based on the **$250 per person** goal. This tool helps visualize how the total funds are allocated across key categories.</p>
+                <div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md mb-12">
+                     <div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                        <label for="participant-count" class="text-lg font-medium text-gray-700">Participants:</label>
+                        <input type="number" id="participant-count" value="75" min="1" class="w-32 px-4 py-2 text-center rounded-lg border-2 border-gray-300 focus:outline-none focus:border-[#c5a880] transition-colors">
+                    </div>
+                    <div class="text-center mt-4">
+                        <p class="text-lg font-medium text-gray-700">Total Estimated Budget:</p>
+                        <p id="total-budget" class="text-3xl font-bold text-[#a0845e]">$18,750</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h3 class="text-xl font-bold text-center mb-4">Sample Budget Allocation</h3>
+                        <div class="chart-container">
+                            <canvas id="budgetChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-bold mb-4">Catering Options</h3>
+                        <p class="text-gray-600 mb-4">Your budget allows for a range of culinary experiences. Here are some ideas:</p>
+                        <ul class="space-y-3">
+                            <li class="flex items-start"><span class="text-2xl mr-3 text-[#c5a880]">🍖</span><div><span class="font-semibold">On-site BBQ Cookout:</span><p class="text-sm text-gray-500">Hire a caterer like Goode Co. for an authentic Texas BBQ experience.</p></div></li>
+                            <li class="flex items-start"><span class="text-2xl mr-3 text-[#c5a880]">🍽️</span><div><span class="font-semibold">Formal Plated Dinner:</span><p class="text-sm text-gray-500">Part of the dinner cruise package, offering an elegant dining experience.</p></div></li>
+                            <li class="flex items-start"><span class="text-2xl mr-3 text-[#c5a880]">🌮</span><div><span class="font-semibold">Casual Farewell Brunch:</span><p class="text-sm text-gray-500">A relaxed meal at La Brisa to say goodbye.</p></div></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="itinerary" class="py-16 bg-white">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-center mb-4">Weekend Itinerary</h2>
+                <p class="text-center text-gray-600 max-w-3xl mx-auto mb-12">Here’s a sample schedule for our Love ShinDig weekend. It balances organized events with plenty of free time for catching up, relaxing, and exploring the area on your own.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Day 1 -->
+                    <div class="bg-gray-50 p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-bold text-[#a0845e]">Thursday, June 18</h3>
+                        <p class="text-sm font-semibold text-gray-500 mb-4">Arrival & Welcome</p>
+                        <ul class="space-y-3 text-gray-700">
+                            <li><span class="font-semibold">Afternoon:</span> Check-in & Settle at **Great Wolf Lodge**.</li>
+                            <li><span class="font-semibold">Evening:</span> Casual Welcome Mixer with light appetizers & drinks.</li>
+                        </ul>
+                    </div>
+                    <!-- Day 2 -->
+                    <div class="bg-gray-50 p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-bold text-[#a0845e]">Friday, June 19</h3>
+                        <p class="text-sm font-semibold text-gray-500 mb-4">Juneteenth Celebration</p>
+                        <ul class="space-y-3 text-gray-700">
+                            <li><span class="font-semibold">Morning/Afternoon:</span> Cultural Excursion to a local Juneteenth parade or highly-rated Black history museum.</li>
+                            <li><span class="font-semibold">Afternoon/Evening:</span> Family Games and Activities at **Great Wolf Lodge**.</li>
+                        </ul>
+                    </div>
+                    <!-- Day 3 -->
+                    <div class="bg-gray-50 p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-bold text-[#a0845e]">Saturday, June 20</h3>
+                        <p class="text-sm font-semibold text-gray-500 mb-4">Explore & Cruise</p>
+                        <ul class="space-y-3 text-gray-700">
+                            <li><span class="font-semibold">Day:</span> Free time for excursions (e.g., Space Center, museums).</li>
+                            <li><span class="font-semibold">Evening:</span> Celebratory Dinner Cruise on Galveston Bay.</li>
+                        </ul>
+                    </div>
+                    <!-- Day 4 -->
+                    <div class="bg-gray-50 p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-bold text-[#a0845e]">Sunday, June 21</h3>
+                        <p class="text-sm font-semibold text-gray-500 mb-4">Farewell Brunch</p>
+                        <ul class="space-y-3 text-gray-700">
+                            <li><span class="font-semibold">Morning:</span> Farewell Brunch at La Brisa in League City.</li>
+                            <li><span class="font-semibold">Afternoon:</span> Departures.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="checklist" class="py-16">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-center mb-4">Day-Of Essentials Checklist</h2>
+                 <p class="text-center text-gray-600 max-w-3xl mx-auto mb-12">As the big day approaches, use this master checklist to ensure all logistical details are covered for a smooth and stress-free event.</p>
+                <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
+                    <ul class="space-y-4">
+                        <li class="flex items-center"><input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#c5a880] focus:ring-[#c5a880]"><span class="ml-3 text-gray-700">Confirm venue access times and vendor arrivals.</span></li>
+                        <li class="flex items-center"><input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#c5a880] focus:ring-[#c5a880]"><span class="ml-3 text-gray-700">Designate and mark parking areas, especially for elderly guests.</span></li>
+                        <li class="flex items-center"><input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#c5a880] focus:ring-[#c5a880]"><span class="ml-3 text-gray-700">Set up a welcome station with name tags and itinerary.</span></li>
+                        <li class="flex items-center"><input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#c5a880] focus:ring-[#c5a880]"><span class="ml-3 text-gray-700">Finalize seating layout and recruit volunteers for setup.</span></li>
+                        <li class="flex items-center"><input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#c5a880] focus:ring-[#c5a880]"><span class="ml-3 text-gray-700">Prepare a fully stocked first-aid kit and have it accessible.</span></li>
+                        <li class="flex items-center"><input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-[#c5a880] focus:ring-[#c5a880]"><span class="ml-3 text-gray-700">Charge cameras and designate a family photographer/videographer.</span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2024 Love ShinDig Planning Committee. Let's make memories!</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const warmPalette = {
+                dark: '#4a4a4a',
+                accent: '#c5a880',
+                lightAccent: '#e6dace',
+                neutral: '#a9a9a9',
+                background: '#fdfaf6'
+            };
+
+            const venueData = [
+                { name: 'Great Wolf Lodge', location: 'Webster', cost: '$$$$', features: 'A resort with an indoor water park, activities, and dining all in one place.' },
+                { name: 'Topgolf Webster', location: 'Webster', cost: '$$$', features: 'Unique entertainment venue ideal for interactive fun.' },
+                { name: 'Main Event Webster', location: 'Webster', cost: '$$$', features: 'One-stop-shop with bowling, games, and themed buffets.' },
+                { name: 'Hometown Heroes Park', location: 'League City', cost: '$$', features: 'Indoor multi-purpose rooms and gyms with tables and chairs included.' },
+                { name: 'La Brisa', location: 'League City', cost: '$$', features: 'Casual Mexican restaurant with a large patio, perfect for the farewell brunch.' },
+                { name: 'Emancipation Park', location: 'Houston', cost: '$$', features: 'Historically significant location with indoor/outdoor spaces.' },
+                { name: 'POST Houston', location: 'Houston', cost: '$$$$', features: 'Modern architectural gem with a lush rooftop park.' },
+            ];
+
+            const venueGrid = document.getElementById('venue-grid');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+
+            function renderVenues(filter) {
+                venueGrid.innerHTML = '';
+                const filteredData = filter === 'all' ? venueData : venueData.filter(v => v.location.toLowerCase().replace(' ', '') === filter.toLowerCase().replace(' ', ''));
+                
+                filteredData.forEach(venue => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-white p-6 rounded-lg shadow-md transition-transform transform hover:-translate-y-1';
+                    card.innerHTML = `
+                        <h3 class="text-lg font-bold">${venue.name}</h3>
+                        <p class="text-sm text-gray-500 mb-2">${venue.location}</p>
+                        <p class="text-gray-600 mb-4">${venue.features}</p>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="font-bold text-[#a0845e]">${venue.cost}</span>
+                        </div>
+                    `;
+                    venueGrid.appendChild(card);
+                });
+            }
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    filterButtons.forEach(btn => {
+                        btn.classList.remove('bg-[#c5a880]', 'text-white');
+                        btn.classList.add('bg-gray-200', 'text-gray-700');
+                    });
+                    button.classList.add('bg-[#c5a880]', 'text-white');
+                    button.classList.remove('bg-gray-200', 'text-gray-700');
+                    renderVenues(button.dataset.filter);
+                });
+            });
+
+            renderVenues('all');
+
+            const countdownElement = document.getElementById('countdown');
+            const shindigDate = new Date('June 18, 2026 16:00:00').getTime();
+
+            function updateCountdown() {
+                const now = new Date().getTime();
+                const distance = shindigDate - now;
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                countdownElement.innerHTML = `
+                    <span>${days}d</span>
+                    <span>${hours}h</span>
+                    <span>${minutes}m</span>
+                    <span>${seconds}s</span>
+                `;
+
+                if (distance < 0) {
+                    clearInterval(countdownInterval);
+                    countdownElement.innerHTML = "The ShinDig is Here!";
+                }
+            }
+            const countdownInterval = setInterval(updateCountdown, 1000);
+            updateCountdown();
+
+            const tooltipTitleCallback = (tooltipItems) => {
+                const item = tooltipItems[0];
+                let label = item.chart.data.labels[item.dataIndex];
+                return Array.isArray(label) ? label.join(' ') : label;
+            };
+
+            const participantCountInput = document.getElementById('participant-count');
+            const totalBudgetSpan = document.getElementById('total-budget');
+            const perPersonCost = 250;
+            let budgetChart;
+
+            function updateBudget() {
+                const participantCount = parseInt(participantCountInput.value) || 0;
+                const totalBudget = participantCount * perPersonCost;
+                totalBudgetSpan.textContent = `$${totalBudget.toLocaleString()}`;
+
+                if (budgetChart) {
+                    budgetChart.data.datasets[0].data = [
+                        totalBudget * 0.45, 
+                        totalBudget * 0.20, 
+                        totalBudget * 0.15, 
+                        totalBudget * 0.10, 
+                        totalBudget * 0.10
+                    ];
+                    budgetChart.update();
+                }
+            }
+            
+            participantCountInput.addEventListener('input', updateBudget);
+
+            const budgetCtx = document.getElementById('budgetChart').getContext('2d');
+            budgetChart = new Chart(budgetCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Venue & Food', 'Entertainment', 'Decorations', 'Communications', 'Contingency'],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: [warmPalette.accent, warmPalette.lightAccent, '#d3c1a5', '#bfa988', warmPalette.neutral],
+                        borderColor: warmPalette.background,
+                        borderWidth: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: { 
+                            callbacks: { 
+                                title: tooltipTitleCallback,
+                                label: (context) => {
+                                    const label = context.label || '';
+                                    const value = context.parsed || 0;
+                                    return `${label}: $${value.toLocaleString()}`;
+                                }
+                            } 
+                        }
+                    }
+                }
+            });
+            
+            const navLinks = document.querySelectorAll('#nav-menu a');
+            const sections = document.querySelectorAll('main section');
+
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 64) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active-link');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active-link');
+                    }
+                });
+            });
+
+            updateBudget();
+        });
+    </script>
 </body>
 </html>
